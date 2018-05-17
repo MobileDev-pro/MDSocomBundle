@@ -15,6 +15,8 @@ class Configuration implements ConfigurationInterface
         $rootNode = $treeBuilder->root(self::ALIAS);
         $rootNode
             ->children()
+                ->scalarNode('price_otag_ht')->end()
+                ->scalarNode('pdf_directory')->end()
                 ->arrayNode('api')
                 ->children()
                     ->scalarNode('key')->end()

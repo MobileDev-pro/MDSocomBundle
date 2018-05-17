@@ -1,0 +1,84 @@
+{% extends 'AdminBundle::layout.html.twig' %}
+
+{% block body_complement %}id="users" class="page-list"{% endblock %}
+
+{% block body %}
+    <div class="wrap">
+        <div class="head">
+            <h2><i class="icon-otag"></i>Commander des <strong>Puces</strong> &nbsp;(20 puces par sachet)</h2>
+        </div> <!-- head -->
+            {{ form_start(form) }}
+            <div class="col">
+                <img src="{{ asset('bundles/mdsocom/image/puces-sachet.jpg') }}" style="max-width:70%; margin-left:15%;"/>
+            </div>
+            <div class="col">
+                {{ form_row(form.clientReference) }}
+                {{ form_row(form.quantity) }}
+                <div class="result">
+                    <h2>Récapitulatif</h2>
+                    <p>
+                        <span id="quantity">2</span> x {{ price_sachet }} <sup>€ HT</sup>
+                    <hr/>
+                    <span id="price">{{ price_sachet * 2 }}</span> <sup>€ HT</sup>
+                    </p>
+                    <br/>
+                    <p style="text-align:center;">
+                        <input type="submit" value="Je commande">
+                    </p>
+                </div>
+            </div>
+            {{ form_widget(form) }}
+        {{ form_end(form) }}
+
+        <br/><br/>
+        <div class="head">
+            <h2><i class="icon-otag"></i>Mes <strong>Commandes</strong></h2>
+        </div> <!-- head -->
+
+        <table class="list-users">
+            <thead>
+            <tr>
+                <th>Quantité</th>
+                <th>statut</th>
+                <th>montant</th>
+                <th>Date</th>
+                <th></th>
+            </tr>
+            </thead>
+
+            <tbody class="list">
+            {% for c in commands %}
+                <tr>
+                    <td>{{ c.statements[0].quantity }} sachet(s) / {{ c.statements[0].quantity * 20 }} puces</td>
+                    <td>{{ c.paidAt ? 'Éxpédié' : 'En attente de règlement' }}</td>
+                    <td>{{ c.price.total }}<sup>€ HT</sup></td>
+                    <td>{{ c.createdAt|date('d/m/Y') }}</td>
+                    <td>
+                        <a class="btn" href="{{ path('md_socom_application_invoice_show', {'id': c.id}) }}">
+                            <i class="icon-look"></i>
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        $(function () {
+            $("#o_tag_quantity").on("change keyup", function (e) {
+                e.preventDefault();
+                var qte = parseInt($(this).val());
+
+                if (isNaN(qte)) {
+                    qte = 0;
+                }
+
+                $("#quantity").text(qte);
+                $("#price").text(qte * {{ price_sachet }});
+            });
+        });
+    </script>
+{% endblock %}

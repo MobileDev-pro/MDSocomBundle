@@ -65,7 +65,7 @@ abstract class AbstractOperator implements OperatorInterface
      */
     protected $updatedAt;
 
-    protected $user;
+    protected $users;
 
     /**
      * @param string $company

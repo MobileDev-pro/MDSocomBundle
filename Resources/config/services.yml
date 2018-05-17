@@ -1,0 +1,7 @@
+services:
+    md_socom.api_manager:
+            class: MD\SocomBundle\Service\ApiManager
+            public: true
+            arguments:
+                - '%md_socom.api.url%'
+                - '%md_socom.api.key%'

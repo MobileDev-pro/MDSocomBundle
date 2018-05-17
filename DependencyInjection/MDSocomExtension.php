@@ -16,6 +16,10 @@ class MDSocomExtension extends Extension
 
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
+
+        $container->setParameter(Configuration::ALIAS . ".pdf_directory", $config['pdf_directory']);
+        $container->setParameter(Configuration::ALIAS . ".price_otag_ht", $config['price_otag_ht']);
+
         foreach ($config['api'] as $key => $val) {
             $container->setParameter(Configuration::ALIAS . ".api.$key", $val);
         }
