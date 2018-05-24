@@ -5,10 +5,17 @@ namespace MD\SocomBundle\DependencyInjection;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
+/**
+ * Class Configuration
+ * @package MD\SocomBundle\DependencyInjection
+ */
 class Configuration implements ConfigurationInterface
 {
     const ALIAS = 'md_socom';
 
+    /**
+     * @return TreeBuilder
+     */
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();

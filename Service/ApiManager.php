@@ -6,18 +6,37 @@ use MD\SocomBundle\Model\OperatorInterface;
 use MD\SocomBundle\Model\OTagCommand;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
+/**
+ * Class ApiManager
+ * @package MD\SocomBundle\Service
+ */
 class ApiManager
 {
+    /**
+     * @var string
+     */
     private $apiUrl;
 
+    /**
+     * @var string
+     */
     private $apiKey;
 
+    /**
+     * ApiManager constructor.
+     * @param $apiUrl
+     * @param $apiKey
+     */
     public function __construct($apiUrl, $apiKey)
     {
         $this->apiUrl = $apiUrl;
         $this->apiKey = $apiKey;
     }
 
+    /**
+     * @param OperatorInterface $operator
+     * @return mixed
+     */
     public function getOffer(OperatorInterface $operator)
     {
         $authorization = "Authorization: Bearer " . $this->apiKey;
@@ -36,6 +55,10 @@ class ApiManager
         return json_decode($res['response']);
     }
 
+    /**
+     * @param OperatorInterface $operator
+     * @return array
+     */
     public function getInvoices(OperatorInterface $operator)
     {
         $res = $this->getOffer($operator);
@@ -43,6 +66,11 @@ class ApiManager
         return $res->invoices ?? array();
     }
 
+    /**
+     * @param OperatorInterface $operator
+     * @param int $id
+     * @return mixed
+     */
     public function getInvoice(OperatorInterface $operator, int $id)
     {
         $invoices = $this->getInvoices($operator);
@@ -56,6 +84,11 @@ class ApiManager
         throw new NotFoundHttpException('The invoice does not exist');
     }
 
+    /**
+     * @param OperatorInterface $operator
+     * @param $type
+     * @return array
+     */
     public function getInvoicesByType(OperatorInterface $operator, $type)
     {
         $invoices = array();
@@ -69,6 +102,10 @@ class ApiManager
         return $invoices;
     }
 
+    /**
+     * @param OTagCommand $command
+     * @return mixed
+     */
     public function sendPuceCommand(OTagCommand $command)
     {
         $authorization = "Authorization: Bearer " . $this->apiKey;
@@ -90,6 +127,12 @@ class ApiManager
         return json_decode($res);
     }
 
+    /**
+     * @param $id
+     * @param $iban
+     * @param $bic
+     * @return mixed
+     */
     public function updateBank($id, $iban, $bic)
     {
         $data = array(
@@ -98,10 +141,7 @@ class ApiManager
         );
 
         $data_json = json_encode($data);
-
         $authorization = "Authorization: Bearer " . $this->apiKey;
-        $dataString = '?iban=' . $iban . '&bic=' . $bic;
-
         $url = $this->apiUrl . "/clients/$id";
 
         $ch = curl_init($url);
@@ -121,7 +161,7 @@ class ApiManager
         $res = curl_exec($ch);
 
         curl_close($ch);
-        die($res);die;
+
         return json_decode($res);
     }
 }

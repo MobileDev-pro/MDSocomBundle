@@ -9,23 +9,8 @@ use Symfony\Component\HttpFoundation\Response;
 class ApplicationRestController extends Controller
 {
     /**
-     * Post("/delivery")
-     * ApiDoc(
-     *     section="Socom",
-     *     description="Livraison d'une application",
-     *     statusCodes={
-     *         200="Returned when successful",
-     *         401="Returned when the user is not authorized on oauth",
-     *         403="Returned when unauthorized",
-     *         404="Returned when does not exist",
-     *     },
-     *     output={
-     *          "class"="Fi\OperateurBundle\Entity\Operateur",
-     *          "groups"={"mini"}
-     *     }
-     * )
-     *
-     * View
+     * @param Request $request
+     * @return Response
      */
     public function postDeliveryAction(Request $request)
     {
@@ -52,6 +37,11 @@ class ApplicationRestController extends Controller
         return $this->createResponse($operator, Response::HTTP_CREATED);
     }
 
+    /**
+     * @param $object
+     * @param $statusCode
+     * @return Response
+     */
     private function createResponse($object, $statusCode = Response::HTTP_OK)
     {
         if (!is_object($object)) {
@@ -66,6 +56,10 @@ class ApplicationRestController extends Controller
         return $response;
     }
 
+    /**
+     * @param $content
+     * @return string
+     */
     private function convertToSnakeCase($content)
     {
         $content = $this->arrayToSnakeCase(json_decode($content, true));
@@ -73,6 +67,10 @@ class ApplicationRestController extends Controller
         return json_encode($content);
     }
 
+    /**
+     * @param array $array
+     * @return array
+     */
     private function arrayToSnakeCase(array $array): array
     {
         foreach ($array as $key => $value) {
