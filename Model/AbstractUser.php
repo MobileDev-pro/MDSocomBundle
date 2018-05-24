@@ -6,22 +6,31 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use FOS\UserBundle\Model\User as BaseUser;
 use FOS\UserBundle\Model\UserInterface as FosUserInterface;
+use JMS\Serializer\Annotation\Type;
+use JMS\Serializer\Annotation\Accessor;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * Operator
  *
  * @ORM\MappedSuperclass()
+ * @UniqueEntity("email")
  */
 abstract class AbstractUser extends BaseUser implements FosUserInterface, UserInterface
 {
+    protected $roles = array();
+
     /**
+     * @Type("string")
      * @ORM\Column(type="string", nullable=true)
+     * @Accessor(getter="getPhone",setter="setPhone")
      */
     protected $phone;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
      * @Gedmo\Timestampable(on="create")
+     * @Accessor(getter="getCreatedAt",setter="setCreatedAt")
      */
     protected $createdAt;
 
@@ -29,40 +38,63 @@ abstract class AbstractUser extends BaseUser implements FosUserInterface, UserIn
      * @ORM\Column(type="datetime", nullable=true)
      * @Gedmo\Timestampable(on="create")
      * @gedmo\Timestampable(on="update")
+     * @Accessor(getter="getUpdatedAt",setter="setUpdatedAt")
      */
     protected $updatedAt;
 
     /**
      * @ORM\ManyToOne(targetEntity="MD\SocomBundle\Model\OperatorInterface", inversedBy="users")
      * @ORM\JoinColumn(nullable=false)
+     * @Accessor(getter="getOperator",setter="setOperator")
      */
     protected $operator;
 
     /**
      * @ORM\Column(type="boolean", options={"default":false})
+     * @Type("boolean")
+     * @Accessor(getter="getAdmin",setter="setAdmin")
      */
     protected $admin = false;
 
     /**
      * @ORM\Column(type="boolean", options={"default":false})
+     * @Type("boolean")
+     * @Accessor(getter="getAccountant",setter="setAccountant")
      */
     protected $accountant = false;
 
     /**
      * @ORM\Column(type="string", nullable=true)
+     * @Type("string")
+     * @Accessor(getter="getType",setter="setType")
      */
     protected $type = self::TECHNICIEN;
 
-
     /**
      * @ORM\Column(type="string", nullable=false)
+     * @Accessor(getter="getLastName",setter="setLastName")
+     * @Type("string")
      */
     protected $lastName;
 
     /**
      * @ORM\Column(type="string", nullable=false)
+     * @Accessor(getter="getFirstName",setter="setFirstName")
+     * @Type("string")
      */
     protected $firstName;
+
+    /**
+     * @Accessor(getter="getPlainPassword",setter="setPlainPassword")
+     * @Type("string")
+     */
+    protected $plainPassword;
+
+    /**
+     * @Accessor(getter="getEmail",setter="setEmail")
+     * @Type("string")
+     */
+    protected $email;
 
     /**
      * AbstractUser constructor.
@@ -71,10 +103,6 @@ abstract class AbstractUser extends BaseUser implements FosUserInterface, UserIn
     public function __construct(OperatorInterface $operator = null)
     {
         parent::__construct();
-
-        if (null !== $operator) {
-            $this->setOperator($operator);
-        }
     }
 
     public function setEmail($email)
@@ -192,15 +220,13 @@ abstract class AbstractUser extends BaseUser implements FosUserInterface, UserIn
      */
     public function setType(string $type): UserInterface
     {
-        if ( ($type != self::ADMINISTRATIF) && ($type != self::TECHNICIEN) && ($type != self::COMPTABILITE) )
-        {
+        if ( ($type != self::ADMINISTRATIF) && ($type != self::TECHNICIEN) && ($type != self::COMPTABILITE) ) {
             $this->type = self::TECHNICIEN;
         }
 
         $this->type = $type;
 
-        if ($type == self::ADMINISTRATIF)
-        {
+        if ($type == self::ADMINISTRATIF) {
             $this->setAdmin(true);
         }
 

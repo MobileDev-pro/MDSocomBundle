@@ -11,17 +11,21 @@ class MDSocomExtension extends Extension
 {
     public function load(array $configs, ContainerBuilder $container)
     {
-        $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        $loader->load('services.yml');
-
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
         $container->setParameter(Configuration::ALIAS . ".pdf_directory", $config['pdf_directory']);
         $container->setParameter(Configuration::ALIAS . ".price_otag_ht", $config['price_otag_ht']);
 
+        foreach ($config['entities'] as $key => $val) {
+            $container->setParameter(Configuration::ALIAS . ".entities.$key", $val);
+        }
+
         foreach ($config['api'] as $key => $val) {
             $container->setParameter(Configuration::ALIAS . ".api.$key", $val);
         }
+
+        $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+        $loader->load('services.yml');
     }
 }

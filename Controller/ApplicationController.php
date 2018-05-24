@@ -18,14 +18,14 @@ class ApplicationController extends Controller
     {
         $manager = $this->get('md_socom.api_manager');
         $op = $this->getUser()->getOperateur();
-        $invoices = $manager->getInvoices($op);
+        $offer = $manager->getOffer($op);
+        $invoices = $offer->invoices ?? array();
 
         usort( $invoices, array(self::class, "dateCompare") );
 
         return $this->render('@MDSocom/index.html.twig', array(
-            'client'   => $res['client'] ?? null,
-            'iban'     => $res['iban'] ?? null,
-            'bic'      => $res['bic'] ?? null,
+            'offer'    => $offer,
+            'client'   => $offer->client ?? null,
             'invoices' => $invoices
         ));
     }
@@ -73,6 +73,72 @@ class ApplicationController extends Controller
      */
     public function invoiceShowAction($id)
     {
+        $invoice = $this->get('md_socom.api_manager')->getInvoice(
+            $this->getUser()->getOperateur(),
+            $id
+        );
+
+        if (!$invoice->pdf) {
+            throw new \LogicException("Erreur le pdf de la facture $id n'existe pas!");
+        }
+
+        $file = $this->getParameter('md_socom.pdf_directory') . $invoice->pdf;
+
+        if (!is_file( $file )) {
+            throw new \LogicException("Erreur le pdf est introuvable à l'addresse $file !");
+        }
+
+        return new Response(file_get_contents($file), 200, array(
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="' . $invoice->number . '.pdf"'
+        ));
+    }
+
+    /**
+     * @Security("is_granted('ROLE_COMPTA')")
+     */
+    public function updateBankAction(Request $request, $id)
+    {
+        $manager = $this->get('md_socom.api_manager');
+        $operator = $this->getUser()->getOperator();
+        $offer = $manager->getOffer($operator);
+
+        if ((int) $offer->fiOpertorId !== (int) $operator->getId()) {
+            throw $this->createAccessDeniedException();
+        }
+
+
+
+
+        $res = $manager->updateBank(
+            $id,
+            $request->request->get('iban'),
+            $request->request->get('bic')
+        );
+
+
+
+        return $this->json($res);
+
+
+        $doctrine = $this->getDoctrine()->getConnection('socom');
+
+        $stmt = $doctrine->prepare('SELECT client_id as client FROM offer WHERE fi_opertor_id = ?');
+        $stmt->execute(array( $this->getOperateur()->getId() ));
+        $res = $stmt->fetch();
+
+        $params = array(
+            'iban'   => $request->request->get('iban'),
+            'bic'    => $request->request->get('bic'),
+            'client' => (int) $res['client']
+        );
+
+        $stmt = $doctrine->prepare('update client set iban = :iban, bic = :bic where id = :client');
+        $stmt->execute( $params );
+
+        return $this->json( $params );
+
+
         $invoice = $this->get('md_socom.api_manager')->getInvoice(
             $this->getUser()->getOperateur(),
             $id

@@ -2,9 +2,12 @@
 
 namespace MD\SocomBundle\Model;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
+use JMS\Serializer\Annotation\Type;
+use JMS\Serializer\Annotation\Accessor;
 
 /**
  * Operator
@@ -15,46 +18,62 @@ abstract class AbstractOperator implements OperatorInterface
 {
     /**
      * @ORM\Column(type="string", nullable=false)
+     * @Accessor(getter="getCompany",setter="setCompany")
+     * @Type("string")
      */
     protected $company;
 
     /**
      * @ORM\Column(type="string", nullable=false)
      * @Assert\NotBlank(message = "Veuillez renseigner une adresse")
+     * @Accessor(getter="getAddress",setter="setAddress")
+     * @Type("string")
      */
     protected $address;
 
     /**
      * @ORM\Column(type="string", nullable=false)
      * @Assert\NotBlank(message = "Veuillez renseigner une ville")
+     * @Accessor(getter="getCity",setter="setCity")
+     * @Type("string")
      */
     protected $city;
 
     /**
      * @ORM\Column(type="string", nullable=false)
-     * @Assert\NotBlank(message = "Veuillez renseigner le code postal du détenteur")
+     * @Assert\NotBlank(message = "Veuillez renseigner le code postal")
+     * @Accessor(getter="getZipCode",setter="setZipCode")
+     * @Type("string")
      */
     protected $zipCode;
 
     /**
      * @ORM\Column(type="string", nullable=false, unique=true)
      * @Assert\NotBlank()
+     * @Accessor(getter="getEmail",setter="setEmail")
+     * @Type("string")
      */
     protected $email;
 
     /**
      * @ORM\Column(type="string", nullable=true)
+     * @Accessor(getter="getContact",setter="setContact")
+     * @Type("string")
      */
     protected $contact;
 
     /**
      * @ORM\Column(type="string", nullable=true)
+     * @Accessor(getter="getPhone",setter="setPhone")
+     * @Type("string")
      */
     protected $phone;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
      * @Gedmo\Timestampable(on="create")
+     * @Accessor(getter="getCreatedAt",setter="setCreatedAt")
+     * @Type("datetime")
      */
     protected $createdAt;
 
@@ -62,10 +81,27 @@ abstract class AbstractOperator implements OperatorInterface
      * @ORM\Column(type="datetime", nullable=true)
      * @Gedmo\Timestampable(on="create")
      * @gedmo\Timestampable(on="update")
+     * @Accessor(getter="getUpdatedAt",setter="setUpdatedAt")
+     * @Type("datetime")
      */
     protected $updatedAt;
 
+    /**
+     * @ORM\OneToMany(targetEntity="UserInterface", mappedBy="operator", cascade={"all"})
+     * @Accessor(getter="getUsers",setter="setUsers")
+     * @Assert\Valid
+     */
     protected $users;
+
+    public function __construct()
+    {
+        $this->users = new ArrayCollection();
+    }
+
+    /**
+     * @return int|null
+     */
+    abstract public function getId(): ?int;
 
     /**
      * @param string $company
@@ -85,6 +121,7 @@ abstract class AbstractOperator implements OperatorInterface
     {
         return $this->company;
     }
+
     /**
      * @param string $zipCode
      * @return OperatorInterface
@@ -242,21 +279,54 @@ abstract class AbstractOperator implements OperatorInterface
     }
 
     /**
+     * @param UserInterface $user
+     * @return OperatorInterface
+     */
+    public function addUser(UserInterface $user): OperatorInterface
+    {
+        $user->setOperator( $this );
+        $this->users[] = $user;
+
+        return $this;
+    }
+
+    /**
+     * @param UserInterface $user
+     * @return OperatorInterface
+     */
+    public function removeUser(UserInterface $user): OperatorInterface
+    {
+        $this->users->removeElement($user);
+
+        return $this;
+    }
+
+    /**
+     * @param ArrayCollection $users
+     * @return OperatorInterface
+     */
+    public function setUsers(ArrayCollection $users): OperatorInterface
+    {
+        if (null === $this->users) {
+            $this->users = new ArrayCollection();
+        }
+
+        foreach($users as $user) {
+            if (($user instanceof UserInterface) && (!$this->users->contains($users))) {
+                $this->addUser($user);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
      * @return \Countable
      */
-    abstract function getUsers(): \Countable;
-
-    /**
-     * @param UserInterface $user
-     * @return OperatorInterface
-     */
-    abstract public function addUser(UserInterface $user): OperatorInterface;
-
-    /**
-     * @param UserInterface $user
-     * @return OperatorInterface
-     */
-    abstract function removeUser(UserInterface $user): OperatorInterface;
+    public function getUsers(): \Countable
+    {
+        return $this->users;
+    }
 
     /**
      * @param string $zipCode

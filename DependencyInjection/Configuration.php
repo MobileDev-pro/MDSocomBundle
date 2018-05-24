@@ -17,11 +17,21 @@ class Configuration implements ConfigurationInterface
             ->children()
                 ->scalarNode('price_otag_ht')->end()
                 ->scalarNode('pdf_directory')->end()
-                ->arrayNode('api')
-                ->children()
-                    ->scalarNode('key')->end()
-                    ->scalarNode('url')->end()
+
+                ->arrayNode('entities')
+                    ->children()
+                        ->scalarNode('user')->end()
+                        ->scalarNode('operator')->end()
+                    ->end()
                 ->end()
+
+                ->arrayNode('api')
+                    ->children()
+                        ->scalarNode('key')->end()
+                        ->scalarNode('url')->end()
+                    ->end()
+                ->end()
+
             ->end()
         ;
 

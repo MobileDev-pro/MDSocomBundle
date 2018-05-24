@@ -5,6 +5,11 @@ namespace MD\SocomBundle\Model;
 interface OperatorInterface
 {
     /**
+     * @return int|null
+     */
+    public function getId(): ?int;
+
+    /**
      * @param string $company
      * @return OperatorInterface
      */

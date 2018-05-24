@@ -40,7 +40,7 @@ class ApiManager
     {
         $res = $this->getOffer($operator);
 
-        return $res->invoices;
+        return $res->invoices ?? array();
     }
 
     public function getInvoice(OperatorInterface $operator, int $id)
@@ -87,6 +87,41 @@ class ApiManager
 
         curl_close($ch);
 
+        return json_decode($res);
+    }
+
+    public function updateBank($id, $iban, $bic)
+    {
+        $data = array(
+            'iban' => $iban,
+            'bic' => $bic
+        );
+
+        $data_json = json_encode($data);
+
+        $authorization = "Authorization: Bearer " . $this->apiKey;
+        $dataString = '?iban=' . $iban . '&bic=' . $bic;
+
+        $url = $this->apiUrl . "/clients/$id";
+
+        $ch = curl_init($url);
+
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+            'Content-Type: application/ld+json',
+            'Content-Length: ' . strlen($data_json),
+            $authorization)
+        );
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
+        curl_setopt($ch, CURLOPT_POSTFIELDS,$data_json);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type: application/ld+json", $authorization));
+
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        $res = curl_exec($ch);
+
+        curl_close($ch);
+        die($res);die;
         return json_decode($res);
     }
 }

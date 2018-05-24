@@ -10,12 +10,6 @@ interface UserInterface
     const MAGASINIER   = 'magasinier';
 
     /**
-     * UserInterface constructor.
-     * @param OperatorInterface|null $operator
-     */
-    public function __construct(OperatorInterface $operator = null);
-
-    /**
      * @param string $phone
      * @return UserInterface
      */
@@ -47,17 +41,6 @@ interface UserInterface
      * @return \DateTime|null
      */
     public function getUpdatedAt(): ?\DateTime;
-
-    /**
-     * @return OperatorInterface
-     */
-    public function getOperator(): OperatorInterface;
-
-    /**
-     * @param OperatorInterface $operator
-     * @return UserInterface
-     */
-    public function setOperator(OperatorInterface $operator): UserInterface;
 
     /**
      * @param bool $admin
