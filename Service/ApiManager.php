@@ -41,7 +41,7 @@ class ApiManager
     {
         $authorization = "Authorization: Bearer " . $this->apiKey;
 
-        $ch = curl_init($url = $this->apiUrl . '/puces/' . $operator->getId() . '/commands');
+        $ch = curl_init($url = $this->apiUrl . '/offer/' . $operator->getId());
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type: application/ld+json", $authorization));
 
@@ -63,7 +63,7 @@ class ApiManager
     {
         $res = $this->getOffer($operator);
 
-        return $res->invoices ?? array();
+        return $res->client->invoices ?? array();
     }
 
     /**
@@ -128,12 +128,12 @@ class ApiManager
     }
 
     /**
-     * @param $id
+     * @param OperatorInterface $operator
      * @param $iban
      * @param $bic
      * @return mixed
      */
-    public function updateBank($id, $iban, $bic)
+    public function updateBank(OperatorInterface $operator, $iban, $bic)
     {
         $data = array(
             'iban' => $iban,

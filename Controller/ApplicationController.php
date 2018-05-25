@@ -21,9 +21,7 @@ class ApplicationController extends Controller
         $manager = $this->get('md_socom.api_manager');
         $op = $this->getUser()->getOperateur();
         $offer = $manager->getOffer($op);
-        $invoices = $offer->invoices ?? array();
-
-        usort( $invoices, array(self::class, "dateCompare") );
+        $invoices = $offer->client->invoices ?? array();
 
         return $this->render('@MDSocom/index.html.twig', array(
             'offer'    => $offer,
@@ -63,8 +61,6 @@ class ApplicationController extends Controller
                 }
             }
         }
-
-        usort( $commands, array(self::class, "dateCompare") );
 
         return $this->render('@MDSocom/puces.html.twig', array(
             'price_sachet' => $this->getParameter('md_socom.price_otag_ht'),
@@ -106,42 +102,18 @@ class ApplicationController extends Controller
      * @Security("is_granted('ROLE_COMPTA')")
      *
      * @param Request $request
-     * @param $id
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
-    public function updateBankAction(Request $request, $id)
+    public function updateBankAction(Request $request)
     {
         $manager = $this->get('md_socom.api_manager');
-        $operator = $this->getUser()->getOperator();
-        $offer = $manager->getOffer($operator);
-
-        if ((int) $offer->fiOpertorId !== (int) $operator->getId()) {
-            throw $this->createAccessDeniedException();
-        }
 
         $res = $manager->updateBank(
-            $id,
+            $this->getUser()->getOperator(),
             $request->request->get('iban'),
             $request->request->get('bic')
         );
 
         return $this->json($res);
-    }
-
-    /**
-     * @param $a
-     * @param $b
-     * @return int
-     */
-    private function dateCompare($a, $b)
-    {
-        $ad = new \DateTime($a->createdAt);
-        $bd = new \DateTime($b->createdAt);
-
-        if ($ad == $bd) {
-            return 0;
-        }
-
-        return $ad < $bd ? 1 : -1;
     }
 }

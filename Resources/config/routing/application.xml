@@ -12,7 +12,7 @@
     <route id="md_socom_application_invoice_show" path="/accounting/invoice/{id}" methods="GET">
         <default key="_controller">MD\SocomBundle\Controller\ApplicationController::invoiceShowAction</default>
     </route>
-    <route id="md_socom_application_update_bank" path="/accounting/bank/{id}" methods="POST">
+    <route id="md_socom_application_update_bank" path="/accounting/bank" methods="POST">
         <default key="_controller">MD\SocomBundle\Controller\ApplicationController::updateBankAction</default>
     </route>
 </routes>

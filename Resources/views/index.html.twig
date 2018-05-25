@@ -8,7 +8,7 @@
             <h2><i class="icon-users"></i>Mes <strong>Factures</strong></h2>
             <a href="#" class="btn btn-add" id="infobank">Changer mes informations bancaire <i class="icon-add"></i></a>
         </div> <!-- head -->
-{{ dump() }}
+
         <table class="list-users">
             <thead>
                 <tr>
@@ -82,7 +82,7 @@
                                     return;
                                 }
                             }
-                            $.post( "{{ path('md_socom_application_update_bank', {'id': offer.id}) }}", {iban: iban, bic: bic} )
+                            $.post( "{{ path('md_socom_application_update_bank') }}", {iban: iban, bic: bic} )
                                 .done(function(data) {
                                     console.log(data);
                                     resolve();
