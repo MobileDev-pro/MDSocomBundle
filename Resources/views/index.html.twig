@@ -84,7 +84,10 @@
                             }
                             $.post( "{{ path('md_socom_application_update_bank') }}", {iban: iban, bic: bic} )
                                 .done(function(data) {
-                                    console.log(data);
+                                    if (!data.id) {
+                                        reject(data[0].message);
+                                    }
+
                                     resolve();
                                 }).fail(function(err) {
                                      reject(err.statusText);

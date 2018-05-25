@@ -34,7 +34,7 @@ class ApplicationRestController extends Controller
         $em->persist($operator);
         $em->flush();
 
-        return $this->createResponse($operator, Response::HTTP_CREATED);
+        return $this->createResponse($operator);
     }
 
     /**

@@ -109,9 +109,12 @@ class ApiManager
     public function sendPuceCommand(OTagCommand $command)
     {
         $authorization = "Authorization: Bearer " . $this->apiKey;
-        $dataString = '?refs=' . $command->getClientReference() . '&sachets=' . $command->getQuantity();
+        $dataString = json_encode(array(
+            'refs' => $command->getClientReference(),
+            'sachets' => $command->getQuantity()
+        ));
 
-        $url = $this->apiUrl . '/puces/' . $command->getOperator()->getId(). '/command';
+        $url = $this->apiUrl . '/puces/' . $command->getOperator()->getId();
 
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -140,23 +143,16 @@ class ApiManager
             'bic' => $bic
         );
 
-        $data_json = json_encode($data);
         $authorization = "Authorization: Bearer " . $this->apiKey;
-        $url = $this->apiUrl . "/clients/$id";
+        $url = $this->apiUrl . "/bank/" . $operator->getId();
 
         $ch = curl_init($url);
 
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-            'Content-Type: application/ld+json',
-            'Content-Length: ' . strlen($data_json),
-            $authorization)
-        );
+
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
-        curl_setopt($ch, CURLOPT_POSTFIELDS,$data_json);
+        curl_setopt($ch,CURLOPT_POSTFIELDS, json_encode($data));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type: application/ld+json", $authorization));
-
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
         $res = curl_exec($ch);
 

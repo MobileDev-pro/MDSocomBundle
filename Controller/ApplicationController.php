@@ -9,11 +9,12 @@ use MD\SocomBundle\Form\Type\OTagType;
 use MD\SocomBundle\Model\OTagCommand;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * @Security("is_granted('ROLE_COMPTA')")
+ */
 class ApplicationController extends Controller
 {
     /**
-     * @Security("is_granted('ROLE_COMPTA')")
-     *
      * @return Response
      */
     public function invoiceListAction()
@@ -31,8 +32,6 @@ class ApplicationController extends Controller
     }
 
     /**
-     * @Security("is_granted('ROLE_COMPTA')")
-     *
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
      */
@@ -70,8 +69,6 @@ class ApplicationController extends Controller
     }
 
     /**
-     * @Security("is_granted('ROLE_COMPTA')")
-     *
      * @param $id
      * @return Response
      */
@@ -99,8 +96,6 @@ class ApplicationController extends Controller
     }
 
     /**
-     * @Security("is_granted('ROLE_COMPTA')")
-     *
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
