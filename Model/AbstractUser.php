@@ -211,6 +211,10 @@ abstract class AbstractUser extends BaseUser implements FosUserInterface, UserIn
      */
     public function getAdmin(): bool
     {
+        if (null === $this->admin) {
+            return false;
+        }
+
         return $this->admin;
     }
 
