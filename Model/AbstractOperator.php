@@ -8,11 +8,13 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
 use JMS\Serializer\Annotation\Type;
 use JMS\Serializer\Annotation\Accessor;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * Operator
  *
  * @ORM\MappedSuperclass
+ * @UniqueEntity("email")
  */
 abstract class AbstractOperator implements OperatorInterface
 {
@@ -92,6 +94,13 @@ abstract class AbstractOperator implements OperatorInterface
      * @Assert\Valid
      */
     protected $users;
+
+    /**
+     * @ORM\Column(type="string", nullable=false, options={"default":"fi-360deg"})
+     * @Accessor(getter="getApplication",setter="setApplication")
+     * @Type("string")
+     */
+    protected $application;
 
     public function __construct()
     {
@@ -326,6 +335,25 @@ abstract class AbstractOperator implements OperatorInterface
     public function getUsers(): \Countable
     {
         return $this->users;
+    }
+
+    /**
+     * @param string $application
+     * @return OperatorInterface
+     */
+    public function setApplication(string $application): OperatorInterface
+    {
+        $this->application = $application;
+
+        return $this;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getApplication(): ?string
+    {
+        return $this->application;
     }
 
     /**
