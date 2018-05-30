@@ -2,12 +2,25 @@
 
 namespace MD\SocomBundle\Controller;
 
+use MD\SocomBundle\Model\OperatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class ApplicationRestController extends Controller
 {
+
+    public function getUsersByOperatorAction($id)
+    {
+        $operator = $this->getDoctrine()->getManager()->getRepository(OperatorInterface::class)->find($id);
+
+        if (null === $operator) {
+            throw $this->createNotFoundException('This operator does not exist!');
+        }
+
+        return $this->createResponse($operator);
+    }
+
     /**
      * @param Request $request
      * @return Response

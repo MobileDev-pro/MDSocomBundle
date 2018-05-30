@@ -7,7 +7,7 @@ interface UserInterface
     const COMPTABILITE  = 'comptabilité';
     const TECHNICIEN    = 'technicien';
     const ADMINISTRATIF = 'administratif';
-    const MAGASINIER   = 'magasinier';
+    const MAGASINIER    = 'magasinier';
 
     /**
      * @param string $phone
