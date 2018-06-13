@@ -233,15 +233,11 @@ abstract class AbstractUser extends BaseUser implements FosUserInterface, UserIn
         if (($type == self::ADMINISTRATIF) || ($type == self::COMPTABILITE)) {
             $this->setAdmin(true);
         }
-<<<<<<< HEAD
 
         if ($type == self::COMPTABILITE) {
             $this->setAdmin(true);
         }
 
-=======
-        
->>>>>>> bcc53887ba024b43a950a4a81760d942fd1b6613
         return $this;
     }
 
