@@ -2,7 +2,9 @@
 
 namespace MD\SocomBundle\Controller;
 
+use App\Entity\User;
 use MD\SocomBundle\Model\OperatorInterface;
+use MD\SocomBundle\Model\UserInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,6 +21,31 @@ class ApplicationRestController extends Controller
         }
 
         return $this->createResponse($operator);
+    }
+
+    public function getOperatorsAction()
+    {
+        $qb = $this->getDoctrine()->getManager()->createQueryBuilder();
+
+        $qb
+            ->select('u.type, u.enabled, o.id as oid')
+            ->from(UserInterface::class, 'u')
+            ->leftJoin(OperatorInterface::class, 'o', 'with', 'o = u.operator')
+            ->where('u.enabled = 1')
+            ->andWhere('o.demo = 0')
+        ;
+
+        $users = $qb->getQuery()->getArrayResult();
+
+        foreach($users as $u) {
+            $res[$u['oid']][] = $u;
+        }
+
+        $json = json_encode($res);
+
+        $response = (new Response($json));
+
+        return $response;
     }
 
     /**

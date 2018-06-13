@@ -9,4 +9,7 @@
     <route id="md_socom_application_find_user" path="/socom/operator/{id}/users" methods="GET">
         <default key="_controller">MD\SocomBundle\Controller\ApplicationRestController::getUsersByOperatorAction</default>
     </route>
+    <route id="md_socom_application_find_operators" path="/socom/operators" methods="GET">
+        <default key="_controller">MD\SocomBundle\Controller\ApplicationRestController::getOperatorsAction</default>
+    </route>
 </routes>
