@@ -224,20 +224,24 @@ abstract class AbstractUser extends BaseUser implements FosUserInterface, UserIn
      */
     public function setType(string $type): UserInterface
     {
-        if ( ($type != self::ADMINISTRATIF) && ($type != self::TECHNICIEN) && ($type != self::COMPTABILITE) ) {
+        if ( ($type != self::MAGASINIER) && ($type != self::ADMINISTRATIF) && ($type != self::COMPTABILITE) ) {
             $this->type = self::TECHNICIEN;
         }
 
         $this->type = $type;
 
-        if ($type == self::ADMINISTRATIF) {
+        if (($type == self::ADMINISTRATIF) || ($type == self::COMPTABILITE)) {
             $this->setAdmin(true);
         }
+<<<<<<< HEAD
 
         if ($type == self::COMPTABILITE) {
             $this->setAdmin(true);
         }
 
+=======
+        
+>>>>>>> bcc53887ba024b43a950a4a81760d942fd1b6613
         return $this;
     }
 
@@ -288,7 +292,11 @@ abstract class AbstractUser extends BaseUser implements FosUserInterface, UserIn
     }
 
     /**
-     * @param bool $accountant
+     * @param bool $
+     
+     
+     
+     ntant
      * @return UserInterface
      */
     public function setAccountant(bool $accountant): UserInterface
@@ -297,6 +305,7 @@ abstract class AbstractUser extends BaseUser implements FosUserInterface, UserIn
 
         if ($accountant === true) {
             $this->addRole('ROLE_COMPTA');
+            $this->addRole('ROLE_ADMIN');
         } else {
             $this->removeRole('ROLE_COMPTA');
         }
