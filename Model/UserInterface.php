@@ -10,10 +10,10 @@ interface UserInterface
     const MAGASINIER    = 'magasinier';
 
     /**
-     * @param string $phone
+     * @param null|string $phone
      * @return UserInterface
      */
-    public function setPhone(string $phone): UserInterface;
+    public function setPhone(?string $phone): UserInterface;
 
     /**
      * @return null|string

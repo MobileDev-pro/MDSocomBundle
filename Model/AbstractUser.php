@@ -117,7 +117,7 @@ abstract class AbstractUser extends BaseUser implements FosUserInterface, UserIn
      * @param string $phone
      * @return UserInterface
      */
-    public function setPhone(string $phone): UserInterface
+    public function setPhone(?string $phone): UserInterface
     {
         $this->phone = $phone;
 
