@@ -191,16 +191,26 @@ abstract class AbstractUser extends BaseUser implements FosUserInterface, UserIn
      */
     public function setAdmin(bool $admin): UserInterface
     {
+        $this->admin = $admin;
+
         if ($this->getType() == self::ADMINISTRATIF) {
             $this->admin = true;
-        } else {
-            $this->admin = $admin;
         }
 
-        if ($admin === true) {
+        if ($this->getType() == self::COMPTABILITE) {
+            $this->accountant = true;
+        }
+
+        if ($this->admin === true) {
             $this->addRole('ROLE_ADMIN');
         } else {
             $this->removeRole('ROLE_ADMIN');
+        }
+
+        if ($this->accountant === true) {
+            $this->addRole('ROLE_COMPTA');
+        } else {
+            $this->removeRole('ROLE_COMPTA');
         }
 
         return $this;
@@ -289,9 +299,9 @@ abstract class AbstractUser extends BaseUser implements FosUserInterface, UserIn
 
     /**
      * @param bool $
-     
-     
-     
+
+
+
      ntant
      * @return UserInterface
      */
