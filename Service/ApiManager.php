@@ -41,7 +41,7 @@ class ApiManager
     {
         $authorization = "Authorization: Bearer " . $this->apiKey;
 
-        $ch = curl_init($url = $this->apiUrl . '/offer/' . $operator->getId());
+        $ch = curl_init($url = $this->apiUrl . '/offer/' . $operator->getId() . '/' . $operator->getApplication());
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type: application/ld+json", $authorization));
 
@@ -51,6 +51,8 @@ class ApiManager
         );
 
         curl_close($ch);
+
+        die($res['response']);
 
         return json_decode($res['response']);
     }

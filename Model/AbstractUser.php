@@ -114,7 +114,7 @@ abstract class AbstractUser extends BaseUser implements FosUserInterface, UserIn
     }
 
     /**
-     * @param string $phone
+     * @param null|string $phone
      * @return UserInterface
      */
     public function setPhone(?string $phone): UserInterface
@@ -234,7 +234,7 @@ abstract class AbstractUser extends BaseUser implements FosUserInterface, UserIn
      */
     public function setType(string $type): UserInterface
     {
-        if ( ($type != self::MAGASINIER) && ($type != self::ADMINISTRATIF) && ($type != self::COMPTABILITE) ) {
+        if (($type != self::MAGASINIER) && ($type != self::ADMINISTRATIF) && ($type != self::COMPTABILITE)) {
             $this->type = self::TECHNICIEN;
         }
 
@@ -299,10 +299,10 @@ abstract class AbstractUser extends BaseUser implements FosUserInterface, UserIn
 
     /**
      * @param bool $
-
-
-
-     ntant
+     *
+     *
+     *
+     * ntant
      * @return UserInterface
      */
     public function setAccountant(bool $accountant): UserInterface
