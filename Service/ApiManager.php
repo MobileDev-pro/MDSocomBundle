@@ -52,8 +52,6 @@ class ApiManager
 
         curl_close($ch);
 
-        die($res['response']);
-
         return json_decode($res['response']);
     }
 
