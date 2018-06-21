@@ -4,6 +4,7 @@ namespace MD\SocomBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use MD\SocomBundle\Form\Type\OTagType;
 use MD\SocomBundle\Model\OTagCommand;
@@ -109,6 +110,6 @@ class ApplicationController extends Controller
             $request->request->get('bic')
         );
 
-        return $this->json($res);
+        return new JsonResponse($res);
     }
 }
