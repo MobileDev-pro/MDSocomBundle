@@ -114,7 +114,7 @@ class ApiManager
             'sachets' => $command->getQuantity()
         ));
 
-        $url = $this->apiUrl . '/puces/' . $command->getOperator()->getId();
+        $url = $this->apiUrl . '/puces/' . $command->getOperator()->getId() . '/' . $command->getOperator()->getApplication();
 
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -144,7 +144,7 @@ class ApiManager
         );
 
         $authorization = "Authorization: Bearer " . $this->apiKey;
-        $url = $this->apiUrl . "/bank/" . $operator->getId();
+        $url = $this->apiUrl . "/bank/" . $operator->getId(). '/' . $operator->getApplication();
 
         $ch = curl_init($url);
 

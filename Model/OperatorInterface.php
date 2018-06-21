@@ -21,6 +21,17 @@ interface OperatorInterface
     public function getCompany(): ?string;
 
     /**
+     * @param string $application
+     * @return OperatorInterface
+     */
+    public function setApplication(string $application): OperatorInterface;
+
+    /**
+     * @return null|string
+     */
+    public function getApplication(): ?string;
+
+    /**
      * @param string $zipCode
      * @return OperatorInterface
      */
