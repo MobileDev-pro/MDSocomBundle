@@ -41,7 +41,6 @@ class ApplicationController extends Controller
     {
         $op = $this->getUser()->getOperateur();
         $manager = $this->get('md_socom.api_manager');
-        $commands = $manager->getInvoicesByType($op, 'puce');
 
         $otag = new OTagCommand($op);
         $form = $this->createForm(OTagType::class, $otag);
@@ -56,7 +55,7 @@ class ApplicationController extends Controller
                 if (isset($result->id)) {
                     $request->getSession()->getFlashBag()->add('info', 'Votre facture est maintenant disponible dans votre espace client.');
 
-                    return $this->redirect($this->generateUrl('md_socom_application_invoice_list'));
+                    return $this->redirect($this->generateUrl('md_socom_otag_index'));
                 } else {
                     $request->getSession()->getFlashBag()->add('warning', "Une erreur s'est produite lors de votre commande.");
                 }
@@ -65,7 +64,6 @@ class ApplicationController extends Controller
 
         return $this->render('@MDSocom/puces.html.twig', array(
             'price_sachet' => $this->getParameter('md_socom.price_otag_ht'),
-            'commands'     => $commands ?? array(),
             'form'         => $form->createView()
         ));
     }
