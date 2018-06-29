@@ -34,34 +34,6 @@
         <div class="head">
             <h2><i class="icon-otag"></i>Mes <strong>Commandes</strong></h2>
         </div> <!-- head -->
-
-        <table class="list-users">
-            <thead>
-            <tr>
-                <th>Quantité</th>
-                <th>statut</th>
-                <th>montant</th>
-                <th>Date</th>
-                <th></th>
-            </tr>
-            </thead>
-
-            <tbody class="list">
-            {% for c in commands %}
-                <tr>
-                    <td>{{ c.statements[0].quantity }} sachet(s) / {{ c.statements[0].quantity * 20 }} puces</td>
-                    <td>{{ c.paidAt ? 'Éxpédié' : 'En attente de règlement' }}</td>
-                    <td>{{ c.price.total }}<sup>€ HT</sup></td>
-                    <td>{{ c.createdAt|date('d/m/Y') }}</td>
-                    <td>
-                        <a class="btn" href="{{ path('md_socom_application_invoice_show', {'id': c.id}) }}">
-                            <i class="icon-look"></i>
-                        </a>
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
     </div>
 {% endblock %}
 
