@@ -102,6 +102,23 @@ abstract class AbstractOperator implements OperatorInterface
      */
     protected $application;
 
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     *
+     * @Expose
+     * @Groups({"mini", "list", "socom"})
+     */
+    protected $attestationCapacite;
+
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     * @Assert\Regex("/^([0-9]{3}[\s]){3}[\d]{5}$/", message="Siret invalide (op-s)")
+     *
+     * @Expose
+     * @Groups({"mini", "list", "socom"})
+     */
+    protected $siret;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
@@ -375,5 +392,47 @@ abstract class AbstractOperator implements OperatorInterface
         }
 
         return $zip;
+    }
+
+    /**
+     * @param null|string $siret
+     * @return OperatorInterface
+     */
+    public function setSiret(?string $siret): OperatorInterface
+    {
+        if (null !== $siret) {
+            $this->siret = $siret;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getSiret(): ?string
+    {
+        return $this->siret;
+    }
+
+    /**
+     * @param null|string $attestationCapacite
+     * @return OperatorInterface
+     */
+    public function setAttestationCapacite(?string $attestationCapacite): OperatorInterface
+    {
+        if (null !== $attestationCapacite) {
+            $this->attestationCapacite = $attestationCapacite;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getAttestationCapacite(): ?string
+    {
+        return $this->attestationCapacite;
     }
 }
