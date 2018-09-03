@@ -135,4 +135,26 @@ interface OperatorInterface
      * @return OperatorInterface
      */
     public function removeUser(UserInterface $user): OperatorInterface;
+
+    /**
+     * @param null|string $siret
+     * @return OperatorInterface
+     */
+    public function setSiret(?string $siret): OperatorInterface;
+
+    /**
+     * @return null|string
+     */
+    public function getSiret(): ?string;
+
+    /**
+     * @param null|string $attestationCapacite
+     * @return OperatorInterface
+     */
+    public function setAttestationCapacite(?string $attestationCapacite): OperatorInterface;
+
+    /**
+     * @return null|string
+     */
+    public function getAttestationCapacite(): ?string;
 }
