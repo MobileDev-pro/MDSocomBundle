@@ -104,18 +104,11 @@ abstract class AbstractOperator implements OperatorInterface
 
     /**
      * @ORM\Column(type="string", nullable=true)
-     *
-     * @Expose
-     * @Groups({"mini", "list", "socom"})
      */
     protected $attestationCapacite;
 
     /**
      * @ORM\Column(type="string", nullable=true)
-     * @Assert\Regex("/^([0-9]{3}[\s]){3}[\d]{5}$/", message="Siret invalide (op-s)")
-     *
-     * @Expose
-     * @Groups({"mini", "list", "socom"})
      */
     protected $siret;
 
