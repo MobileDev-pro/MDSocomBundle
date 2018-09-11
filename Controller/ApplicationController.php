@@ -2,115 +2,159 @@
 
 namespace MD\SocomBundle\Controller;
 
+use App\Entity\User;
+use JMS\Serializer\SerializationContext;
+use MD\SocomBundle\Model\OperatorInterface;
+use MD\SocomBundle\Model\UserInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
-use MD\SocomBundle\Form\Type\OTagType;
-use MD\SocomBundle\Model\OTagCommand;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
-/**
- * @Security("is_granted('ROLE_ADMIN')")
- */
-class ApplicationController extends Controller
+class ApplicationRestController extends Controller
 {
+
+    public function getUsersByOperatorAction($id)
+    {
+        $operator = $this->getDoctrine()->getManager()->getRepository(OperatorInterface::class)->find($id);
+
+        if (null === $operator) {
+            throw $this->createNotFoundException('This operator does not exist!');
+        }
+
+        return $this->createResponse($operator);
+    }
+
+    public function getOperatorsAction()
+    {
+        $qb = $this->getDoctrine()->getManager()->createQueryBuilder();
+
+        $qb
+            ->select('u.type, u.enabled, o.id as oid')
+            ->from(UserInterface::class, 'u')
+            ->leftJoin(OperatorInterface::class, 'o', 'with', 'o = u.operator')
+            ->where('u.enabled = 1')
+            ->andWhere('o.demo = 0')
+        ;
+
+        $users = $qb->getQuery()->getArrayResult();
+
+        foreach($users as $u) {
+            $res[$u['oid']][] = $u;
+        }
+
+        $json = json_encode($res);
+
+        $response = (new Response($json));
+
+        return $response;
+    }
+
     /**
-     * @Security("is_granted('ROLE_COMPTA')")
      * @return Response
      */
-    public function invoiceListAction()
+    public function getAllOperatorsAction()
     {
-        $manager = $this->get('md_socom.api_manager');
-        $op = $this->getUser()->getOperateur();
-        $offer = $manager->getOffer($op);
-        $invoices = $offer->client->invoices ?? array();
+        $operators = $this->getDoctrine()
+                          ->getRepository(OperatorInterface::class)
+                          ->findBy(
+                              array('demo' => false),
+                              array('createdAt' => 'asc')
+                          );
 
-        return $this->render('@MDSocom/index.html.twig', array(
-            'offer'    => $offer,
-            'client'   => $offer->client ?? null,
-            'invoices' => $invoices
+        $response = (new JsonResponse(
+            $this->get('jms_serializer')
+                 ->serialize(
+                     $operators,
+                     'json',
+                     SerializationContext::create()->setGroups(array('socom-mini'))
+                 )
         ));
+
+        return $response;
     }
 
     /**
      * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
+     * @return Response
      */
-    public function otagAction(Request $request)
+    public function postDeliveryAction(Request $request)
     {
-        $op = $this->getUser()->getOperateur();
-        $manager = $this->get('md_socom.api_manager');
+        $serializer = $this->get('jms_serializer');
 
-        $otag = new OTagCommand($op);
-        $form = $this->createForm(OTagType::class, $otag);
-        $form->handleRequest($request);
+        $content = $this->convertToSnakeCase($request->getContent());
 
-        if (($form->isSubmitted()) && ($form->isValid())) {
-            if (method_exists($op, 'getDemo') && $op->getDemo()) {
-                $request->getSession()->getFlashBag()->add('warning', "Cette fonctionnalité n'est pas disponible pour les comptes de démonstrations.");
-            } else {
-                $result = $manager->sendPuceCommand($otag);
+        $operator = $serializer->deserialize(
+            $content,
+            $this->getParameter('md_socom.entities.operator'),
+            'json'
+        );
 
-                if (isset($result->id)) {
-                    $request->getSession()->getFlashBag()->add('info', 'Votre facture est maintenant disponible dans votre espace client.');
+        $errors = $this->get("validator")->validate($operator);
 
-                    return $this->redirect($this->generateUrl('md_socom_otag_index'));
-                } else {
-                    $request->getSession()->getFlashBag()->add('warning', "Une erreur s'est produite lors de votre commande.");
-                }
+        if (count($errors) > 0) {
+            return $this->createResponse($errors, Response::HTTP_BAD_REQUEST);
+        }
+
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($operator);
+        $em->flush();
+
+        return $this->createResponse($operator);
+    }
+
+    /**
+     * @param $object
+     * @param $statusCode
+     * @return Response
+     */
+    private function createResponse($object, $statusCode = Response::HTTP_OK)
+    {
+        if (!is_object($object)) {
+            throw new \LogicException('The variable $object is not a object serializable!');
+        }
+
+        $json = $this->get('jms_serializer')->serialize($object, 'json');
+
+        $response = (new Response($json));
+        $response->setStatusCode($statusCode);
+
+        return $response;
+    }
+
+    /**
+     * @param $content
+     * @return string
+     */
+    private function convertToSnakeCase($content)
+    {
+        $content = $this->arrayToSnakeCase(json_decode($content, true));
+
+        return json_encode($content);
+    }
+
+    /**
+     * @param array $array
+     * @return array
+     */
+    private function arrayToSnakeCase(array $array): array
+    {
+        foreach ($array as $key => $value) {
+            preg_match_all('!([A-Z][A-Z0-9]*(?=$|[A-Z][a-z0-9])|[A-Za-z][a-z0-9]+)!', $key, $matches);
+            $ret = $matches[0];
+
+            foreach ($ret as &$match) {
+                $match = $match == strtoupper($match) ? strtolower($match) : lcfirst($match);
+            }
+
+            $key = implode('_', $ret);
+            $content[$key] = $value;
+
+            if (is_array($value)) {
+                $content[$key] = $this->arrayToSnakeCase($value);
             }
         }
 
-        return $this->render('@MDSocom/puces.html.twig', array(
-            'price_sachet' => $this->getParameter('md_socom.price_otag_ht'),
-            'form'         => $form->createView()
-        ));
-    }
-
-    /**
-     * @Security("is_granted('ROLE_COMPTA')")
-     * @param $id
-     * @return Response
-     */
-    public function invoiceShowAction($id)
-    {
-        $invoice = $this->get('md_socom.api_manager')->getInvoice(
-            $this->getUser()->getOperateur(),
-            $id
-        );
-
-        if (!$invoice->pdf) {
-            throw new \LogicException("Erreur le pdf de la facture $id n'existe pas!");
-        }
-
-        $file = $this->getParameter('md_socom.pdf_directory') . $invoice->pdf;
-
-        if (!is_file( $file )) {
-            throw new \LogicException("Erreur le pdf est introuvable à l'addresse $file !");
-        }
-
-        return new Response(file_get_contents($file), 200, array(
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="' . $invoice->number . '.pdf"'
-        ));
-    }
-
-    /**
-     * @Security("is_granted('ROLE_COMPTA')")
-     * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
-     */
-    public function updateBankAction(Request $request)
-    {
-        $manager = $this->get('md_socom.api_manager');
-
-        $res = $manager->updateBank(
-            $this->getUser()->getOperator(),
-            $request->request->get('iban'),
-            $request->request->get('bic')
-        );
-
-        return new JsonResponse($res);
+        return $content;
     }
 }
