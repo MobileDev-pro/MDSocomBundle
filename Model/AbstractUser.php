@@ -68,7 +68,7 @@ abstract class AbstractUser extends BaseUser implements FosUserInterface, UserIn
      * @Type("string")
      * @Accessor(getter="getType",setter="setType")
      */
-    protected $type = self::TECHNICIEN;
+    protected $type = self::ADMINISTRATIF;
 
     /**
      * @ORM\Column(type="string", nullable=false)
