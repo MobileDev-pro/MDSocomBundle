@@ -2,6 +2,7 @@
 
 namespace MD\SocomBundle\Controller;
 
+use MD\SocomBundle\Service\S3Service;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -84,13 +85,9 @@ class ApplicationController extends Controller
             throw new \LogicException("Erreur le pdf de la facture $id n'existe pas!");
         }
 
-        $file = $this->getParameter('md_socom.pdf_directory') . $invoice->pdf;
+        $file = $this->get('md_socom.s3_manager')->get($invoice->pdf);
 
-        if (!is_file( $file )) {
-            throw new \LogicException("Erreur le pdf est introuvable à l'addresse $file !");
-        }
-
-        return new Response(file_get_contents($file), 200, array(
+        return new Response($file, 200, array(
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'inline; filename="' . $invoice->number . '.pdf"'
         ));
