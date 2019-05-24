@@ -81,6 +81,8 @@ class ApplicationRestController extends Controller
             $this->getParameter('md_socom.entities.operator'),
             'json'
         );
+        
+        $operator->getUsers()->first()->setOperateur($operator);
         $errors = $this->get("validator")->validate($operator);
 
         if (count($errors) > 0) {
