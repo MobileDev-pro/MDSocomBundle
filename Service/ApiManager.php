@@ -17,10 +17,7 @@ class ApiManager
      */
     private $apiUrl;
 
-    /**
-     * @var string
-     */
-    private $apiKey;
+    private $headers;
 
     /**
      * ApiManager constructor.
@@ -30,7 +27,12 @@ class ApiManager
     public function __construct($apiUrl, $apiKey)
     {
         $this->apiUrl = $apiUrl;
-        $this->apiKey = $apiKey;
+
+        $this->headers = array(
+            "Content-Type: application/ld+json",
+            "Authorization: Bearer " . $apiKey,
+            "X-Auth-Token: " . $apiKey
+        );
     }
 
     /**
@@ -39,11 +41,9 @@ class ApiManager
      */
     public function getOffer(OperatorInterface $operator)
     {
-        $authorization = "Authorization: Bearer " . $this->apiKey;
-
         $ch = curl_init($url = $this->apiUrl . '/offer/' . $operator->getId() . '/' . $operator->getApplication());
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type: application/ld+json", $authorization));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
 
         $res = array(
             'statusCode' => curl_getinfo($ch, CURLINFO_HTTP_CODE),
@@ -108,7 +108,6 @@ class ApiManager
      */
     public function sendPuceCommand(OTagCommand $command)
     {
-        $authorization = "Authorization: Bearer " . $this->apiKey;
         $dataString = json_encode(array(
             'refs' => $command->getClientReference(),
             'sachets' => $command->getQuantity()
@@ -121,7 +120,7 @@ class ApiManager
         curl_setopt($ch,CURLOPT_URL, $url);
         curl_setopt($ch,CURLOPT_POST, 2);
         curl_setopt($ch,CURLOPT_POSTFIELDS, $dataString);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type: application/ld+json", $authorization));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
 
         $res = curl_exec($ch);
 
@@ -143,16 +142,14 @@ class ApiManager
             'bic' => $bic
         );
 
-        $authorization = "Authorization: Bearer " . $this->apiKey;
         $url = $this->apiUrl . "/bank/" . $operator->getId(). '/' . $operator->getApplication();
 
         $ch = curl_init($url);
 
-
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
         curl_setopt($ch,CURLOPT_POSTFIELDS, json_encode($data));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type: application/ld+json", $authorization));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
 
         $res = curl_exec($ch);
 
