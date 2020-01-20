@@ -4,7 +4,6 @@ namespace MD\SocomBundle\Model;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
 use JMS\Serializer\Annotation\Type;
 use JMS\Serializer\Annotation\Accessor;
@@ -73,7 +72,6 @@ abstract class AbstractOperator implements OperatorInterface
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
-     * @Gedmo\Timestampable(on="create")
      * @Accessor(getter="getCreatedAt",setter="setCreatedAt")
      * @Type("datetime")
      */
@@ -81,8 +79,6 @@ abstract class AbstractOperator implements OperatorInterface
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
-     * @Gedmo\Timestampable(on="create")
-     * @gedmo\Timestampable(on="update")
      * @Accessor(getter="getUpdatedAt",setter="setUpdatedAt")
      * @Type("datetime")
      */
@@ -114,6 +110,11 @@ abstract class AbstractOperator implements OperatorInterface
 
     public function __construct()
     {
+        $now = new \DateTime();
+
+        $this->createdAt = $now;
+        $this->updatedAt = $now;
+
         $this->users = new ArrayCollection();
     }
 

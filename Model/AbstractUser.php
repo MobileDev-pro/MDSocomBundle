@@ -3,7 +3,6 @@
 namespace MD\SocomBundle\Model;
 
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation as Gedmo;
 use FOS\UserBundle\Model\User as BaseUser;
 use FOS\UserBundle\Model\UserInterface as FosUserInterface;
 use JMS\Serializer\Annotation\Type;
@@ -29,15 +28,12 @@ abstract class AbstractUser extends BaseUser implements FosUserInterface, UserIn
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
-     * @Gedmo\Timestampable(on="create")
      * @Accessor(getter="getCreatedAt",setter="setCreatedAt")
      */
     protected $createdAt;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
-     * @Gedmo\Timestampable(on="create")
-     * @gedmo\Timestampable(on="update")
      * @Accessor(getter="getUpdatedAt",setter="setUpdatedAt")
      */
     protected $updatedAt;
@@ -99,9 +95,14 @@ abstract class AbstractUser extends BaseUser implements FosUserInterface, UserIn
     /**
      * AbstractUser constructor.
      * @param OperatorInterface|null $operator
+     * @throws \Exception
      */
     public function __construct(OperatorInterface $operator = null)
     {
+        $now = new \DateTime();
+        $this->createdAt = $now;
+        $this->updatedAt = $now;
+
         parent::__construct();
     }
 
