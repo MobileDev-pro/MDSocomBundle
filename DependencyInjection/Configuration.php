@@ -11,6 +11,8 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
  */
 class Configuration implements ConfigurationInterface
 {
+    const ALIAS = 'md_socom';
+
     /**
      * @return TreeBuilder
      */
