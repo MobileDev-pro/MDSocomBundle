@@ -11,16 +11,14 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
  */
 class Configuration implements ConfigurationInterface
 {
-    const ALIAS = 'md_socom';
-
     /**
      * @return TreeBuilder
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root(self::ALIAS);
-        $rootNode
+        $treeBuilder = new TreeBuilder('md_socom');
+
+        $treeBuilder->getRootNode()
             ->children()
                 ->scalarNode('price_otag_ht')->end()
                 ->scalarNode('pdf_directory')->end()
