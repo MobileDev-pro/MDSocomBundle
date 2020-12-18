@@ -226,7 +226,7 @@ abstract class AbstractOperator implements OperatorInterface
      * @param string $contact
      * @return OperatorInterface
      */
-    public function setContact(string $contact): OperatorInterface
+    public function setContact(?string $contact): OperatorInterface
     {
         $this->contact = $contact;
 
@@ -245,7 +245,7 @@ abstract class AbstractOperator implements OperatorInterface
      * @param string $phone
      * @return OperatorInterface
      */
-    public function setPhone(string $phone): OperatorInterface
+    public function setPhone(?string $phone): OperatorInterface
     {
         $this->phone = $phone;
 
