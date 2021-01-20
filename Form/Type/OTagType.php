@@ -26,7 +26,7 @@ class OTagType extends AbstractType
                 'label' => "Référence commande interne :",
                 'required' => false,
                 'attr' => array(
-                    'placeholder' => "ex: Fi 360"
+                    'placeholder' => "ex: 001XXX"
                 )
             ))
             ->add('quantity',  IntegerType::class, array(
