@@ -110,7 +110,8 @@ class ApiManager
     {
         $dataString = json_encode(array(
             'refs' => $command->getClientReference(),
-            'sachets' => $command->getQuantity()
+            'sachets' => $command->getQuantity(),
+            'isLevy' => $command->getIsLevy()
         ));
 
         $url = $this->apiUrl . '/puces/' . $command->getOperator()->getId() . '/' . $command->getOperator()->getApplication();

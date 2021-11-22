@@ -18,6 +18,8 @@ class OTagCommand
 
     protected $operator;
 
+    protected $isLevy;
+
     public function __construct(OperatorInterface $operator)
     {
         $this->setOperator($operator);
@@ -78,5 +80,21 @@ class OTagCommand
     public function getOperator(): OperatorInterface
     {
         return $this->operator;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getIsLevy()
+    {
+        return $this->isLevy;
+    }
+
+    /**
+     * @param mixed $isLevy
+     */
+    public function setIsLevy($isLevy): void
+    {
+        $this->isLevy = $isLevy;
     }
 }
