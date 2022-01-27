@@ -42,6 +42,9 @@ class OTagType extends AbstractType
             ->add('isLevy', CheckboxType::class, array(
                 'label'    => 'Je souhaite être prélevé',
                 'required' => false,
+                'attr' => array(
+                    'class' => 'checkbox prevl addcheckbox'
+                )
             ))
         ;
     }
