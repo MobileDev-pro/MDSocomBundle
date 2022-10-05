@@ -65,7 +65,8 @@ class ApplicationController extends Controller
 
         return $this->render('@MDSocom/puces.html.twig', array(
             'price_sachet' => $this->getParameter('md_socom.price_otag_ht'),
-            'form'         => $form->createView()
+            'form'         => $form->createView(),
+            'type'         => $type
         ));
     }
 
