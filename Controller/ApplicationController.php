@@ -54,7 +54,11 @@ class ApplicationController extends Controller
                 $result = $manager->sendPuceCommand($otag, $type);
 
                 if (isset($result->id)) {
-                    $request->getSession()->getFlashBag()->add('info', 'Votre facture est maintenant disponible dans votre espace client.');
+                    if($type === "offer"){
+                        $request->getSession()->getFlashBag()->add('info', 'Votre demande a bien été prise en compte.');
+                    }else{
+                        $request->getSession()->getFlashBag()->add('info', 'Votre facture est maintenant disponible dans votre espace client.');
+                    }
 
                     return $this->redirect($this->generateUrl('md_socom_otag_index', ['type' => $type]));
                 } else {
