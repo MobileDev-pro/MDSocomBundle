@@ -38,7 +38,7 @@ class ApplicationController extends Controller
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
      */
-    public function otagAction(Request $request)
+    public function otagAction(Request $request, string $type = "invoice")
     {
         $op = $this->getUser()->getOperateur();
         $manager = $this->get('md_socom.api_manager');
@@ -51,7 +51,7 @@ class ApplicationController extends Controller
             if (method_exists($op, 'getDemo') && $op->getDemo()) {
                 $request->getSession()->getFlashBag()->add('warning', "Cette fonctionnalité n'est pas disponible pour les comptes de démonstrations.");
             } else {
-                $result = $manager->sendPuceCommand($otag);
+                $result = $manager->sendPuceCommand($otag, $type);
 
                 if (isset($result->id)) {
                     $request->getSession()->getFlashBag()->add('info', 'Votre facture est maintenant disponible dans votre espace client.');
