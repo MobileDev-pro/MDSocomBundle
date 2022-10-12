@@ -60,7 +60,7 @@ class ApplicationController extends Controller
                         $request->getSession()->getFlashBag()->add('info', 'Votre facture est maintenant disponible dans votre espace client.');
                     }
 
-                    return $this->redirect($this->generateUrl('md_socom_otag_index', ['type' => $type]));
+                    return $this->redirect($this->generateUrl('fi_admin_index', ['type' => $type]));
                 } else {
                     $request->getSession()->getFlashBag()->add('warning', "Une erreur s'est produite lors de votre commande.");
                 }
