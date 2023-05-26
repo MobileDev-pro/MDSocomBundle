@@ -20,6 +20,8 @@ class OTagCommand
 
     protected $isLevy;
 
+    protected $email;
+
     public function __construct(OperatorInterface $operator)
     {
         $this->setOperator($operator);
@@ -97,4 +99,22 @@ class OTagCommand
     {
         $this->isLevy = $isLevy;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    /**
+     * @param mixed $email
+     */
+    public function setEmail($email)
+    {
+        $this->email = $email;
+    }
+
+
 }

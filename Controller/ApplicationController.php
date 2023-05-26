@@ -44,6 +44,7 @@ class ApplicationController extends Controller
         $manager = $this->get('md_socom.api_manager');
 
         $otag = new OTagCommand($op);
+        $otag->setEmail($this->getUser()->getEmail());
         $form = $this->createForm(OTagType::class, $otag);
         $form->handleRequest($request);
 

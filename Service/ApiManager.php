@@ -104,14 +104,16 @@ class ApiManager
 
     /**
      * @param OTagCommand $command
+     * @param string $type
      * @return mixed
      */
-    public function sendPuceCommand(OTagCommand $command, $type = "invoice")
+    public function sendPuceCommand(OTagCommand $command, string $type = "invoice")
     {
         $dataString = json_encode(array(
             'refs' => $command->getClientReference(),
             'sachets' => $command->getQuantity(),
-            'isLevy' => $command->getIsLevy()
+            'isLevy' => $command->getIsLevy(),
+            'email' => $command->getEmail()
         ));
 
         $url = $this->apiUrl . '/puces/' . $command->getOperator()->getId() . '/' . $command->getOperator()->getApplication() . '/' . $type;
