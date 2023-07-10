@@ -38,7 +38,11 @@
                             {% if echeance >= 'now'|date("Ymd") %}
                                 <strong>À régler avant le {{ datemax }}</strong>
                             {% else %}
-                                <i class="icon-warning" style="color:red;"></i><strong>À régler avant le {{ datemax }}</strong>
+                                {% if i.canceled == 0 %}
+                                    <i class="icon-warning" style="color:red;"></i><strong>À régler avant le {{ datemax }}</strong>
+                                {% else %}
+                                    <strong>Facture annulée</strong>
+                                {% endif %}
                             {% endif %}
                         {% endif %}
                     </td>
