@@ -27,6 +27,8 @@ class ApplicationController extends Controller
         $offer = $manager->getOffer($op);
         $invoices = $offer->client->invoices ?? array();
 
+        $invoices = array_reverse($invoices);
+
         return $this->render('@MDSocom/index.html.twig', array(
             'offer'    => $offer,
             'client'   => $offer->client ?? null,
