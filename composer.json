@@ -16,7 +16,7 @@
         }
     ],
     "require": {
-        "php": "^7.0",
+        "php": "^7.0 || ^8.0",
         "aws/aws-sdk-php": "^3.0",
         "symfony/framework-bundle": "^3.3 || ^4.0 || ^5.0",
         "sensio/framework-extra-bundle": "^5.1",
